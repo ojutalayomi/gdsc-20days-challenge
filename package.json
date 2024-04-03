@@ -1,0 +1,23 @@
+{
+  "name": "20-days-backend-development-challenge",
+  "version": "1.0.0",
+  "description": "This project is for the gdsc 20 days challenge",
+  "main": "index.js",
+  "scripts": {
+    "test": "nmp test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ojutalayomi/gdsc-20days-challenge.git"
+  },
+  "keywords": [
+    "Backend",
+    "Development"
+  ],
+  "author": "Ojutalayo Ayomide Josiah",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/ojutalayomi/gdsc-20days-challenge/issues"
+  },
+  "homepage": "https://github.com/ojutalayomi/gdsc-20days-challenge#readme"
+}
