@@ -4,7 +4,7 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const cors = require('cors');
 const bodyParser = require('body-parser');
-
+const { client } = require('./database/mongodb')
 const app = express();
 
 app.use(cookieParser());
@@ -21,11 +21,26 @@ app.use(cors());
 app.use(express.static(__dirname));
 
 app.get('/hello', async (req,res) => {
-    res.send('<h1> <b>Hello GDSC</b> </h1>');
-})
+    try{
+        await client.connect();
+        console.log('Connected to database');
+        const collection = client.db('gdsc').collection('db');
+        res.send('<h1> <b>Hello GDSC</b> </h1>');
+
+    } catch (err){
+        console.error('Error: ',err);
+        res.status(500).json({error: err});
+    } finally {
+        await client.close();
+    }
+});
 
 app.get('/api/hello', async (req,res) => {
     res.status(200).json({message: 'Hello GDSC'});
+});
+
+app.get('/', async (req,res) => {
+    res.redirect('/hello');
 })
 
 // 
