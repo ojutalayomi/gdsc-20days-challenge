@@ -1,0 +1,53 @@
+[
+                {
+                  user: "BookLover123",
+                  rating: 4.8,
+                  comment: "An inspiring and thought-provoking memoir. Highly recommended!"
+                },
+                {
+                    user: "ReadingFanatic",
+                    rating: 5,
+                    comment: "A beautifully written book that touches the heart. Couldn't put it down!"
+                }
+              ],
+              related_books: [
+                {
+                    title: "The Power of Now",
+                    author: "Eckhart Tolle"
+                },
+                {
+                    title: "Becoming",
+                    author: "Michelle Obama"
+                }
+              ]
+    
+<table id="bookDetails">
+            <!-- Table content will be dynamically generated here -->
+            <tbody>
+                <tr><td>Id</td><td>Author</td><td>Book Title</td><td>Date Upladed</td><td>Author's email</td><td>Book Image</td><td>Verified</td><td>ISBN</td><td>Publisher</td><td>Publish-Date</td><td>Genre</td><td>Book Description</td><td>Language</td><td>No Of Pages</td><td>Verified</td><td>Format</td><td>Price</td></tr>
+            </tbody>
+        </table>
+        function populateTable(data) {
+                const table = document.getElementById('bookDetails');
+
+                data.forEach(book => {
+                    const row = table.insertRow();
+                    for (const [key, value] of Object.entries(book)) {
+                        const cell = row.insertCell();
+                        cell.textContent = Array.isArray(value) ? value.join(', ') : value;
+                    }
+                });
+            };
+
+            table {
+            border-collapse: collapse;
+            width: 100%;
+            }
+            th, td {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+            }
+            th {
+            background-color: #f2f2f2;
+            }

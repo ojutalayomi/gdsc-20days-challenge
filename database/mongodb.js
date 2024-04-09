@@ -1,5 +1,5 @@
 require('dotenv').config();
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectID } = require('mongodb');
 const uri = process.env.MONGOLINK;
 
 const client = new MongoClient(uri, {
@@ -22,5 +22,6 @@ process.on('SIGINT', async () => {
 });
     
 module.exports = {
-    client
+    client,
+    ObjectID
 };  

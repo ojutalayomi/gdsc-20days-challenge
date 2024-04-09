@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Book Store</title>
+        <style>
+        body {
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        .main {
+            height: inherit;
+            overflow: auto;
+        }
+        
+        h1 {
+            text-align: center;
+            margin: 10px 0;
+        }
+        
+        h2 {
+            text-align: center;
+        }
+        
+        .books {
+            padding: 10px;
+            margin: 20px 10px;
+            border-radius: 10px;
+            box-shadow: inset 0px 0px 9px 0px #00000085;
+            overflow: auto;
+        }
+        
+        .book {
+            margin: 10px 20px;
+        }
+        
+        li {
+            margin: 10px 0;
+        }
+        </style>
+    </head>
+    <body>
+        <div class="main">
+            <h1>Welcome To The Book Store</h1>
+            <h2>These are the lists of available books we have.</h2>
+            <div class="books"></div>
+        </div>
+    </body>
+    <script>
+        document.addEventListener('DOMContentLoaded', function(){
+            function book_Store(){
+                fetch(`/bookstore/getbooks`, {
+                    method: 'GET'
+                }).then(response => {
+                    if(!response.ok){
+                        throw new Error(`HTTP error! Status: ${response.status}`);
+                    }
+                    return response.json();
+                }).then(books => {
+                    console.log(books);
+                    // Call the function to populate the table with the JSON data
+                    populateTable(books);
+                }).catch(error => {
+                    console.error('Error: ', error);
+                });
+            };
+            book_Store();
+            function template(book){
+                const image = `<img src="/${book.book_cover}" alt="${book.title}">`
+                const book_template = `
+                <h3>Book Ttle: ${book.title}</h3>
+                <ul>
+                    <li>Book ID: ${book._id}</li>
+                    <li>Author: ${book.author}</li>
+                    <li>Publication Date: ${book.publication_date}</li>
+                    <li>Date Uploaded: ${book.date_uploaded}</li>
+                    <li>Author's Email: ${book.author_email}</li>
+                    <li>Book Cover:${image}</li>
+                    <li>Verified: ${book.verified}</li>
+                    <li>ISBN: ${book.isbn}</li>
+                    <li>Genre: ${book.genres}</li>
+                    <li>Publisher: ${book.publisher}</li>
+                    <li>Description: ${book.description}</li>
+                    <li>Page Count: ${book.page_count}</li>
+                    <li>Avalable: ${book.availability}</li>
+                    <li>Format: ${book.format}</li>
+                    <li>Price: ${book.price}$</li>
+                </ul>
+                `
+                const div = document.createElement('div');
+                div.innerHTML = book_template;
+                div.className = "book";
+                div.setAttribute('data-id', book._id)
+                return div;
+            }
+            // Function to create and populate the table
+            function populateTable(data) {
+                const parent = document.querySelector('.books');
+                data.forEach(book => {
+                    const list = template(book);
+                    parent.appendChild(list);
+                });
+            };
+        });
+    </script>
+</html>

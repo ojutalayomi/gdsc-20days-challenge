@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Dashboard | Book Store</title>
+        <style>
+        body {
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        .main {
+            height: inherit;
+            overflow: auto;
+        }
+        
+        h1 {
+            text-align: center;
+            margin: 10px 0;
+        }
+        
+        h2,h3,h4,h5 {
+            text-align: center;
+        }
+        .center{
+            align-items: center;
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+        }
+        #message {
+            display: none;
+            justify-content: center;
+            align-items: center;
+            /* position: sticky; */
+            /* bottom: 0; */
+        }
+
+        #message span {
+            background: white;
+            border: 2px solid black;
+            border-radius: 10px;
+            padding: 10px;
+            position: absolute;
+            top: 0;
+        }
+        
+        .books {
+            padding: 10px;
+            margin: 20px 10px;
+            border-radius: 10px;
+            box-shadow: inset 0px 0px 9px 0px #00000085;
+            overflow: auto;
+        }
+        
+        .book {
+            margin: 10px 20px;
+        }
+        
+        li {
+            margin: 10px 0;
+        }
+
+        input,textarea {
+            padding: 5px;
+            border-radius: 10px;
+            border: 1px solid #00000066;
+        }
+        input:disabled, textarea:disabled{
+            border: none;
+        }
+
+        input.title {font-size: 1em;text-align: left;width: auto;background: none;}
+        .update,.delete,.cancel,.save{cursor: pointer;margin: 5px 0;padding: 5px 10px;}
+        .save{color: green;}
+        .cancel{display: none;}
+        .delete{color: red;}
+        </style>
+    </head>
+    <body>
+        <div id="message">
+            <span></span>
+        </div>
+        <div class="main">
+            <h1>Welcome To The Book Store</h1>
+            <h2>Dear <%= fullname  %>,<br>These are the lists of available books you have uploaded.</h2>
+            <h3>This is your email: <%= email %></h3>
+            <h3>To upload your book click <a href="/dashboard/<%= key %>/uploadbook">Upload.</a></h3>
+            <div class="books"></div>
+        </div>
+        <input id="hidden" type="hidden" value="<%= email %>">
+        <input id="key" type="hidden" value="<%= key %>">
+    </body>
+    <script>
+        document.addEventListener('DOMContentLoaded', function(){
+            const email = document.querySelector('#hidden');
+            const parent = document.querySelector('.books');
+            const message = document.querySelector('#message');
+            setTimeout(() => {
+                email.addEventListener('change', () => {
+                    this.style.display = 'none';
+                })
+            }, 500);
+            function book_Store(){
+                fetch(`/bookstore/getbooks?key=${email.value}`, {
+                    method: 'GET'
+                }).then(response => {
+                    if(!response.ok){
+                        throw new Error(`HTTP error! Status: ${response.status}`);
+                    }
+                    return response.json();
+                }).then(books => {
+                    console.log(books);
+                    // Call the function to populate the table with the JSON data
+                    populateTable(books);
+                }).catch(error => {
+                    console.error('Error: ', error);
+                    if(error = "No books uploaded by you"){
+                        const h3 = document.createElement('h3');
+                        h3.innerHTML = error;
+                        parent.appendChild(h3);
+                    }
+                });
+            };
+            book_Store();
+            function template(book){
+                const image = `<img src="/${book.book_cover}" alt="${book.title}">`
+                const book_template = `
+                <form data-id="${book._id}">
+                <h3>Book Ttle: <input type="text" class="title" name="title" value="${book.title}" disabled=""></h5>      
+                <ul>
+                    <li>Book ID: ${book._id}</li>
+                    <li>Author: <input type="text" name="author" value="${book.author}" disabled=""></li>
+                    <li>Publication Date: <input type="text" name="publication_date" value="${book.publication_date}" placeholder="${book.publication_date}" disabled=""></li>
+                    <li>Date Uploaded: ${book.date_uploaded}</li>
+                    <li>Author's Email: <input type="email" name="email" value="${book.author_email}" disabled=""></li>
+                    <li>Book Cover: ${image}</li>
+                    <li>Verified: ${book.verified}</li>
+                    <li>ISBN: <input type="text" name="isbn" value="${book.isbn}" disabled=""></li>
+                    <li>Genre: <input type="text" name="genres" value="${book.genres}" disabled=""></li>
+                    <li>Publisher: <input type="text" name="publisher" value="${book.publisher}" disabled=""></li>
+                    <li>Description: <input type="text" name="book_description" value="${book.description}" disabled=""></li>
+                    <li>Page Count: <input type="number" name="no_of_pages" value="${book.page_count}" disabled=""></li>
+                    <li>Avalable: <input type="text" name="availability" value="${book.availability}" disabled=""></li>
+                    <li>Format: <input type="text" name="format" value="${book.format}" disabled=""></li>
+                    <li>Price: <input type="number" name="price" value="${book.price}" disabled="">$</li>
+                </ul>
+                <div class="center">
+                    <button type="button" class="update">Update Book</button>
+                    <button type="button" class="cancel">Cancel</button>
+                </div> 
+                <div class="center">
+                    <button type="button" class="delete">Delete book</button>
+                </div>
+                </form>
+                `
+                const div = document.createElement('div');
+                div.innerHTML = book_template;
+                div.className = "book";
+                // div.setAttribute('data-id', book._id)
+                return div;
+            }
+            // Function to create and populate the table
+            function populateTable(data) {
+                data.forEach(book => {
+                    const list = template(book);
+                    parent.appendChild(list);
+                });
+            };
+
+            const mymethod = (me,disabled,className,innerHTML,display,type,next) => {
+                let parent = me.parentElement.parentElement;
+                let inputs = parent.querySelectorAll('input');
+                let nexxt = parent.querySelector('.cancel');
+                nexxt.style.display = display;
+                me.className = className;
+                me.innerHTML = innerHTML;
+                me.type = type;
+                inputs.forEach(input => {
+                    input.disabled = disabled;
+                })
+            };
+
+            document.addEventListener('click', function(event) {
+
+                if (event.target.classList.contains('delete')) {
+                    let parent = event.target.parentElement.parentElement;
+                    let id = parent.getAttribute('data-id');
+                    const key = document.getElementById('key');
+                    let url = `/bookstore/deletebook?bookid=${id}&key=${key.value}`;
+                    deleteBook(url);
+                    console.log(id); 
+
+                } else if (event.target.classList.contains('update')) {
+                    event.preventDefault();
+                    let me = event.target;
+                    mymethod(me,false,'save','Save','block','submit','Cancel');
+
+                } else if (event.target.classList.contains('cancel')) {
+                    let me = event.target;
+                    let parent = me.parentElement.parentElement;
+                    let nexxt = parent.querySelector('.save');
+                    mymethod(nexxt,true,'update','Update Book','none','button','',);
+
+                } else if (event.target.classList.contains('save')) {
+                    let me = event.target;
+                    let thisForm = me.parentElement.parentElement;
+                    console.log(thisForm);
+                    updateBook(thisForm);
+                    mymethod(me,true,'update','Update Book','none','button','');
+                }        
+            });
+            const updateBook = (thisForm) => {
+                let formData = [];
+                let id = thisForm.getAttribute('data-id');
+                let inputs = thisForm.querySelectorAll('input');
+                inputs.forEach(input => {
+                    let inputObj = {
+                        [input.name]: input.value
+                    };
+                    formData.push(inputObj);
+                })
+                // console.log(formData)
+                let url = `/bookstore/updatebook?key=${id}`;
+                fetch(url, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json' // Specify that the content type is JSON
+                    },
+                    body: JSON.stringify(formData)
+                })
+                .then(response => {
+                    if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    // console.log(data);
+                    message.querySelector('span').innerText = data;
+                    message.style.display = 'flex';
+                    setTimeout(() => {
+                        message.style.display = 'none';
+                        window.location.reload();  
+                    }, 4000);
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+            }
+            const deleteBook = (url) => {
+                fetch(url,{
+                    method: 'delete'
+                })
+                .then(response => {
+                    if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    message.querySelector('span').innerText = data;
+                    message.style.display = 'flex';
+                    setTimeout(() => {
+                        message.style.display = 'none';
+                        window.location.reload(); 
+                    }, 4000); 
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+            }
+        });
+    </script>
+</html>

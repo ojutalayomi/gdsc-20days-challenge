@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+    <html lang="en">
+        <head>
+            <title>Accounts Creation</title>
+            <style>
+                body {
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    height: 100vh;
+                    flex-direction: column;
+                }
+
+                form {
+                    display: flex;
+                    justify-content: center;
+                    gap: 30px;
+                    flex-direction: column;
+                    align-items: center;
+                }
+
+                input,button {
+                    height: 50px;
+                    width: 60vw;
+                    border-radius: 10px;
+                    padding: 0 10px;
+                    font-size: 1.5em;
+                    outline: none;
+                }
+            </style>
+        </head>
+        <body>
+            <h1> Your One Stop Bookstore </h1>
+            <h2> Create an author account with us. </h2>
+            <form action="/accounts/authors" method="post" target="_blank">
+                <input type="text" name="firstname" placeholder="Fill in your firstname" required>
+                <input type="text" name="lastname" placeholder="Fill in your lastname" required>
+                <input type="email" name="email" placeholder="Fill in your email" required>
+                <input type="password" name="password" placeholder="Fill in your password" required>
+                <input type="file" name="author_image" placeholder="Fill in your upload your picture" required>
+                <button type="submit">Create Account</button>
+            </form>
+        </body>
+    </html>    

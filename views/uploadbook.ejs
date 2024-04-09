@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+    <html lang="en">
+        <head>
+            <title>Book Upload</title>
+            <style>
+                body {
+                    display: flex;
+                    align-items: center;
+                    height: 100vh;
+                    flex-direction: column;
+                }
+
+                strong{
+                    color: blue;
+                    cursor: pointer;
+                    font-weight: 900;
+                }
+
+                form {
+                    display: flex;
+                    justify-content: center;
+                    gap: 30px;
+                    flex-direction: column;
+                    align-items: center;
+                }
+
+                input,textarea, button {
+                    height: 50px;
+                    width: 60vw;
+                    border-radius: 10px;
+                    padding: 0 10px;
+                    font-size: 1.5em;
+                    outline: none;
+                }
+
+                textarea{
+                    padding: 10px;
+                }
+            </style>
+        </head>
+        <body>
+            <h1> Your One Stop Bookstore </h1>
+            <h2>Dear <%= fullname  %>,</h2>
+            <h2> Upload your book. </h2>
+            <h2>Do you want to go back to dashboard. Click <strong onclick="window.history.back()">Go Back</strong></h2>
+            <form method="post" target="_blank" autocomplete="on">
+                <input type="text" name="name" placeholder="Fill in your fullname" required>
+                <input type="text" name="title" placeholder="Book title" required>
+                <input type="text" name="isbn" placeholder="fill in the ISBN" required>
+                <input type="email" name="email" placeholder="Fill in your email" required>
+                <input type="text" name="publisher" placeholder="Publisher?" required>
+                <input type="date" name="publication_date" placeholder="Date of publication?" required>
+                <input type="text" name="genres" placeholder="What's the genre?" required>
+                <textarea name="book_description" maxlength="150" placeholder="Describe the book"></textarea>
+                <input type="text" name="language" placeholder="Language?" required>
+                <input type="text" name="no_of_pages" placeholder="No of Pages?" required>
+                <input type="text" name="format" placeholder="What's the format?" required>
+                <input type="text" name="price" placeholder="What's the price?" required>
+                <input type="file" name="book_cover" placeholder="Upload your picture" required>
+                <button type="submit">Upload Book</button>
+            </form>
+        </body>
+        <input id="hidden" type="hidden" value="<%= key %>">
+        <script>
+            var form = document.querySelector('form');
+            const key = document.querySelector('#hidden');
+            form.action = `/bookstore/createbook?key=${key.value}`;
+        </script>
+    </html>    

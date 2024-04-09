@@ -28,8 +28,13 @@ THings to be done during this challenge
   - Create two end endpoints, /hello (this endpoint should return the Hello GDSC in bold) and /api/hello (should return the same thing but this time in JSON form with the message property set to “Hello GDSC”).
 - Day 3:
   - Connect to a database
-- Day 4
+- Day 4:
   - Create an API for a bookstore.
+- Day 5-6:
+  - Create API endpoints that performs CRUD operations
+- Day 7-8:
+  - Set up custom user authentication. Where a user in the bookstore, enters his name and password before he can get access to any book.
+- Day 9-10  
 
 ### Screenshot
 
@@ -45,14 +50,18 @@ THings to be done during this challenge
 
 ## My process
 
-- Day 1
+- Day 1:
   - I created an express server with node js.
-- Day 2
+- Day 2:
   - I created the /hello and /api/hello endpoints. They both returned the expected response.
-- Day 3
+- Day 3:
   - I connected to a NoSQL database which is MongoDB  
-- Day 4
+- Day 4:
   - The bookstore api was created
+- Day 5-6:
+  - Only registered users can now create books, view available books, update books and delete any of their books.
+- Day 7-8:  
+  - Users can on perform CRUD operations when signed in.   
 
 ### Built with
 
