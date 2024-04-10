@@ -34,19 +34,28 @@ THings to be done during this challenge
   - Create API endpoints that performs CRUD operations
 - Day 7-8:
   - Set up custom user authentication. Where a user in the bookstore, enters his name and password before he can get access to any book.
-- Day 9-10  
+- Day 9-10
+  - Using a library, create support for authentication using Bearer tokens  
 
 ### Screenshot
 
 ![/hello endpoint](./hello-endpoint.png)
 ![/api/hello endpoint](./api-hello-endpoint.png)
+![/accounts/signin endpoint](./signin-endpoint.png)
+![/accounts/authors enpoint](./signup-endpoint.png)
+![/bookstore endpoint](./bookstore-endpoint.png)
+![/dashboard endpoint](./dashboard.png)
+![/upload endpoint](./upload-endpoint.png)
 
 ### Links
 
 - Solution URL: [Solution URL here](https://github.com/ojutalayomi/gdsc-20days-challenge)
 - Live Site URL(/hello): [Live site URL here](https://gdsc-20days-challenge.onrender.com/hello)
 - Live Site URL(/api/hello): [Live site URL here](https://gdsc-20days-challenge.onrender.com/api/hello)
+- Live Site URL(/signup): [Live site URL here](https://gdsc-20days-challenge.onrender.com/accounts/authors)
+- Live Site URL(/signin): [Live site URL here](https://gdsc-20days-challenge.onrender.com/accounts/signin)
 - Live Site URL(/bookstore): [Live site URL here](https://gdsc-20days-challenge.onrender.com/bookstore)
+
 
 ## My process
 
@@ -61,7 +70,9 @@ THings to be done during this challenge
 - Day 5-6:
   - Only registered users can now create books, view available books, update books and delete any of their books.
 - Day 7-8:  
-  - Users can on perform CRUD operations when signed in.   
+  - Users can on perform CRUD operations when signed in.
+- Day 9-10:  
+  - I used the JWT library to generate bearer tokens (which I set to expire in an hour, after which the user will be redirected to signin to refresh the token.)   
 
 ### Built with
 

@@ -6,6 +6,7 @@ const cors = require('cors');
 const ejs = require('ejs');
 const crypto = require('crypto');
 const bodyParser = require('body-parser');
+const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const validator = require('validator');
 const ObjectID = require('mongodb').ObjectId;
@@ -52,18 +53,27 @@ app.get('/bookstore', async(req,res) => {
 
 app.get('/accounts/signin', async (req,res) => {
     res.render('signin');
-})
+});
 
 app.get('/dashboard/:key', async(req,res) => {
+    const key = req.params.key;
     await client.connect();
     console.log('Connected to database');
-
-    const key = req.params.key;
     const authors = client.db('gdsc').collection('authors');
     const author = await authors.findOne( { key: key } );
-    if(!key || !author){
-        return res.redirect(`/accounts/signin`);
+
+    if(!author){
+        return res.redirect('/accounts/signin');
     }
+
+    // Verify the token
+    jwt.verify(author.token, key, (err, decoded) => {
+        if (err) {
+            // Token is invalid or expired
+            return res.redirect('/accounts/signin');
+        }
+    });
+
     const { firstname = '', lastname = '', fullname = '', email = ''} = author || {};
     res.render('dashboard', {
         key: key,
@@ -108,21 +118,23 @@ app.post('/accounts/signin', async (req,res) => {
 
         const author = await authors.findOne({ email: email });
         if(!author){
-            if(!email){
-            return res.status(404).json({ error: 'Wrong email'});
+            if(!author.email){
+                return res.status(404).json({ error: 'Wrong email'});
             }
-            // Compare the provided password with the hashed password from the database
-            const passwordMatch = await bcrypt.compare(password, user.password);
-            // If passwordMatch is false, it means the password does not match
-            if (!passwordMatch) {
-            return res.status(401).json({ error: 'Invalid password' });
-            };
         }
-        const key = secretKeyy(5);
+        // Compare the provided password with the hashed password from the database
+        const passwordMatch = await bcrypt.compare(password, author.password);
+        // If passwordMatch is false, it means the password does not match
+        if (!passwordMatch) {
+            return res.status(401).json({ error: 'Invalid password' });
+        };
+       const key = secretKeyy(5);
+        // Create a jwt token
+        const token = jwt.sign({ email: email }, key, { expiresIn: '1h' });
         
         await authors.updateOne(
             { email: email },
-            { $set: { key: key}}
+            { $set: { key: key, token: token}}
         );
 
         return res.redirect(`/dashboard/${key}`);
@@ -222,7 +234,6 @@ app.post('/bookstore/createbook', async (req,res) => {
         const author = await authors.findOne( { key: key } );
         const collection = client.db('gdsc').collection('db');
         const time = new Date().toLocaleString();
-        const id = secretKeyy(8);
 
         const { name, title, email, displayPicture, isbn, publisher, publication_date, genres, book_description, language, no_of_pages, availability, format, price, review} = req.body;
 
@@ -231,7 +242,6 @@ app.post('/bookstore/createbook', async (req,res) => {
         }
 
         const updateFields = {
-            _id: id,
             author: name,
             title: title,
             date_uploaded: time,
@@ -292,36 +302,39 @@ app.delete('/bookstore/deletebook', async (req,res) => {
     }
 });
 
+// Endpo
 app.put('/bookstore/updatebook', async(req,res) => {
     try {
         const key = req.query.key;
-        // console.log(req.body)
-        const [ title, author, publication_date, email, isbn, genres, publisher, book_description, no_of_pages, availability, format, price ] = req.body;
+        console.log(key)
+        const objectId = new ObjectID(key);
+        console.log(req.body)
+        const { title, author, publication_date, email, isbn, genres, publisher, book_description, no_of_pages, availability, format, price } = req.body;
         await client.connect();
         const collection = client.db('gdsc').collection('db');
         const book = await collection.findOne({_id: key});
         const time = new Date().toLocaleString();
 
         const updateFields = {
-            title: title.title,
-            author: author.author,
-            publication_date: publication_date.publication_date,
-            author_email: email.email,
-            isbn: isbn.isbn, // Set to false to trigger email confirmation
-            genres: genres.genres,
-            publisher: publisher.publisher,
-            description: book_description.book_description,
-            page_count: parseInt(no_of_pages.no_of_pages),
-            availability: availability.availability,
-            format: format.format,
-            price: parseFloat(price.price),
+            title: title,
+            author: author,
+            publication_date: publication_date,
+            author_email: email,
+            isbn: isbn,
+            genres: genres,
+            publisher: publisher,
+            description: book_description,
+            page_count: parseInt(no_of_pages),
+            availability: availability,
+            format: format,
+            price: parseFloat(price),
             lastUpdate: time
         };
-        // console.log(updateFields)
+        console.log(updateFields)
 
         // Only update the fields that need to be changed
         await collection.updateOne(
-            { _id: key }, // Filter to find the existing document
+            { _id: objectId }, // Filter to find the existing document
             { $set: updateFields, $inc: { noOfUpdates: 1 } },
             { upsert: false }  
         );

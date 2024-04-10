@@ -116,7 +116,7 @@
                     }
                     return response.json();
                 }).then(books => {
-                    console.log(books);
+                    // console.log(books);
                     // Call the function to populate the table with the JSON data
                     populateTable(books);
                 }).catch(error => {
@@ -195,7 +195,7 @@
                     const key = document.getElementById('key');
                     let url = `/bookstore/deletebook?bookid=${id}&key=${key.value}`;
                     deleteBook(url);
-                    console.log(id); 
+                    // console.log(id); 
 
                 } else if (event.target.classList.contains('update')) {
                     event.preventDefault();
@@ -211,20 +211,18 @@
                 } else if (event.target.classList.contains('save')) {
                     let me = event.target;
                     let thisForm = me.parentElement.parentElement;
-                    console.log(thisForm);
+                    // console.log(thisForm);
                     updateBook(thisForm);
                     mymethod(me,true,'update','Update Book','none','button','');
                 }        
             });
             const updateBook = (thisForm) => {
-                let formData = [];
+                let formData = {};
                 let id = thisForm.getAttribute('data-id');
+                // console.log(id)
                 let inputs = thisForm.querySelectorAll('input');
                 inputs.forEach(input => {
-                    let inputObj = {
-                        [input.name]: input.value
-                    };
-                    formData.push(inputObj);
+                    formData[input.name]= input.value;
                 })
                 // console.log(formData)
                 let url = `/bookstore/updatebook?key=${id}`;
@@ -243,12 +241,7 @@
                 })
                 .then(data => {
                     // console.log(data);
-                    message.querySelector('span').innerText = data;
-                    message.style.display = 'flex';
-                    setTimeout(() => {
-                        message.style.display = 'none';
-                        window.location.reload();  
-                    }, 4000);
+                    displayMessage(data);
                 })
                 .catch(error => {
                     console.error('Error:', error);
@@ -265,16 +258,19 @@
                     return response.json();
                 })
                 .then(data => {
-                    message.querySelector('span').innerText = data;
-                    message.style.display = 'flex';
-                    setTimeout(() => {
-                        message.style.display = 'none';
-                        window.location.reload(); 
-                    }, 4000); 
+                    displayMessage(data);
                 })
                 .catch(error => {
                     console.error('Error:', error);
                 });
+            }
+            const displayMessage = (data) => {
+                message.querySelector('span').innerText = data;
+                message.style.display = 'flex';
+                setTimeout(() => {
+                    message.style.display = 'none';
+                    window.location.reload(); 
+                }, 1000 * 4); 
             }
         });
     </script>
